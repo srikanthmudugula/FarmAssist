@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmAssist</title>
+    <link rel="stylesheet" href="./output.css">
+    <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <script src="./index.js" defer></script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-green-600 text-white p-4 shadow-lg">
+        <nav class="text-xl md:text-2xl lg:text-3xl font-bold">
+            Farm<span class="text-yellow-400">Assist.</span>
+        </nav>
+    </header>
+    <div id="mainContainer" class="container mx-auto p-4 flex flex-col lg:flex-row gap-8">
+        <div id="clockContainer" class="bg-white p-6 rounded-lg shadow-md flex-1">
+            <div id="clock">
+                <h1 id="timeHeading" class="text-xl md:text-2xl lg:text-3xl font-semibold mb-4">Time Tracker</h1>
+                <div id="start" class="flex flex-col md:flex-row items-center mb-4">
+                    <label for="s_hour" class="mr-2">Start time:</label>
+                    <div class="flex">
+                        <input type="text" class="select_time w-12 p-2 border rounded" id="s_hour" placeholder="HH">
+                        <input type="text" class="select_time w-12 p-2 border rounded ml-2" id="s_minutes" placeholder="MM">
+                        <select id="s_am_pm" class="select_time p-2 border rounded ml-2">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="end" class="flex flex-col md:flex-row items-center mb-4">
+                    <label for="e_hour" class="mr-2">End time&nbsp; &nbsp;:</label>
+                    <div class="flex">
+                        <input type="text" class="select_time w-12 p-2 border rounded" id="e_hour" placeholder="HH">
+                        <input type="text" class="select_time w-12 p-2 border rounded ml-2" id="e_minutes" placeholder="MM">
+                        <select id="e_am_pm" class="select_time p-2 border rounded ml-2">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="calculation" class="flex flex-col md:flex-row items-center gap-4">
+                    <button class="calButton bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600" id="cal" onclick="calculateTime()">Calculate</button>
+                    <button class="calButton bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600" id="cle" onclick="clearTime()">Clear</button>
+                </div>
+                <div id="miscelinious" class="mt-6">
+                    <div id="timerResult" class="mb-4">
+                        <h3 id="h_text" class="font-semibold text-lg md:text-xl lg:text-2xl">Time difference in hours:</h3>
+                        <h3 id="m_text" class="font-semibold text-lg md:text-xl lg:text-2xl">Time difference in minutes:</h3>
+                    </div>
+                    <div id="span1" class="flex flex-col md:flex-row items-center gap-4 mb-4">
+                        <input type="text" class="misc w-full md:w-40 p-2 border rounded" placeholder="Hourly based cost" id="b_hour">
+                        <input type="text" placeholder="Discount" class="misc w-full md:w-32 p-2 border rounded" id="b_dis">
+                        <select id="disOpt" class="misc p-2 border rounded">
+                            <option value="rupees">₹ (rupees)</option>
+                            <option value="%">% (percentage)</option>
+                        </select>
+                    </div>
+                    <button id="billGenarate" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600" onclick="calculateBill()">Generate Bill</button>
+                </div>
+            </div>
+        </div>
+        <div id="billContainer" class="bg-white p-6 rounded-lg shadow-md flex-1">
+            <table class="w-full">
+                <tr>
+                    <td colspan="2"><h1 class="text-xl md:text-2xl lg:text-3xl font-semibold mb-4">Bill</h1></td>
+                </tr>
+                <tr>
+                    <td class="pr-4">Enterprise Name</td>
+                    <td><input type="text" class="tableCells w-full p-2 border rounded" id="enterprise"></td>
+                </tr>
+                <tr>
+                    <td class="pr-4">Farmer Name</td>
+                    <td><input type="text" class="tableCells w-full p-2 border rounded" id="farmer"></td>
+                </tr>
+                <tr>
+                    <td class="pr-4">Time (in hrs)</td>
+                    <td><input type="text" class="tableCells w-full p-2 border rounded" id="tableHours"></td>
+                </tr>
+                <tr>
+                    <td class="pr-4">Amount (in Rs)</td>
+                    <td><input type="text" class="tableCells w-full p-2 border rounded" id="amount"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="pt-4">
+                        <button id="print" onclick="afterPrint()" class="buttonRegular bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full">Print</button>
+                    </td>
+                </tr>
+            </table>
+            <div id="printContainer" class="hidden mt-6">
+                <div id="company" class="mb-4">
+                    <div id="company_name_print">
+                        <h3 id="company_name_final" class="text-lg md:text-xl lg:text-2xl font-semibold"></h3>
+                    </div>
+                    <div id="date_and_serialNo" class="flex justify-between">
+                        <h3 id="serialNO_final" class="text-md md:text-lg lg:text-xl"></h3>
+                        <h3 id="date_final" class="text-md md:text-lg lg:text-xl"></h3>
+                    </div>
+                </div>
+                <table id="printTable" class="w-full border border-gray-300">
+                    <tr>
+                        <td class="p-2 border">Farmer Name</td>
+                        <td class="p-2 border" id="f_name"></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">Time</td>
+                        <td class="p-2 border" id="f_time"></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">Amount</td>
+                        <td class="p-2 border" id="f_amt"></td>
+                    </tr>
+                    <tr id="td">
+                        <td colspan="2" class="p-4 text-center">
+                            <button id="exportPDF" onclick="downloadPDF()" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Download</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
